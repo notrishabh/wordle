@@ -56,6 +56,12 @@ enum GameStatus {
   Ongoing = "ongoing",
 }
 
+type GuessedLetter = {
+  letter: string;
+  index: number;
+  status: "yellow" | "green" | "gray";
+};
+
 export default function GamePage() {
   const turns = 6;
   const router = useRouter();
@@ -65,6 +71,8 @@ export default function GamePage() {
   const [error, setError] = useState<boolean>(false);
   const reffer = useRef<(HTMLInputElement | null)[]>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
+  const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
+  const [wordSubmitted, setWordSubmitted] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -92,9 +100,40 @@ export default function GamePage() {
 
   const verifyWord = (index: number) => {
     const currentWord = guess[index];
-    console.log(word, currentWord);
     checkWordApi(currentWord).then((res) => {
       if (res) {
+        currentWord.split("").forEach((letter, index) => {
+          if (word?.includes(letter)) {
+            if (word[index] === letter) {
+              setGuessedLetters((prev) => [
+                ...prev,
+                {
+                  letter,
+                  index,
+                  status: "green",
+                },
+              ]);
+            } else {
+              setGuessedLetters((prev) => [
+                ...prev,
+                {
+                  letter,
+                  index,
+                  status: "yellow",
+                },
+              ]);
+            }
+          } else {
+            setGuessedLetters((prev) => [
+              ...prev,
+              {
+                letter,
+                index,
+                status: "gray",
+              },
+            ]);
+          }
+        });
         if (currentWord === word) {
           setGameStatus(GameStatus.Win);
         } else if (index === turns - 1) {
@@ -148,11 +187,29 @@ export default function GamePage() {
             onChange={(e) => handleChange(e, index)}
           >
             <InputOTPGroup className="uppercase font-semibold">
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-              <InputOTPSlot index={4} />
+              {[...Array(5)].map((_, charIdx) => {
+                const currentWord = guess[index] || ""; // Get the current word (if exists)
+                const letter = currentWord[charIdx] || ""; // Get the letter at the current index
+                const guessedLetter = guessedLetters.find(
+                  (gl) => gl.index === charIdx && gl.letter === letter,
+                );
+
+                return (
+                  <InputOTPSlot
+                    key={charIdx}
+                    index={charIdx}
+                    className={`${
+                      guessedLetter
+                        ? guessedLetter.status === "green"
+                          ? "bg-green-500 text-white"
+                          : guessedLetter.status === "yellow"
+                            ? "bg-yellow-500 text-black"
+                            : "bg-gray-500 text-white"
+                        : ""
+                    }`}
+                  />
+                );
+              })}
             </InputOTPGroup>
           </InputOTP>
         ))}
