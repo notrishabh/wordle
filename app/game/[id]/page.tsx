@@ -50,13 +50,21 @@ async function getCryptoKey() {
   );
 }
 
+enum GameStatus {
+  Win = "win",
+  Loss = "loss",
+  Ongoing = "ongoing",
+}
+
 export default function GamePage() {
   const turns = 6;
   const router = useRouter();
   const id = useParams().id;
   const [word, setWord] = useState<string | null>(null);
   const [guess, setGuess] = useState<string[]>([]);
+  const [error, setError] = useState<boolean>(false);
   const reffer = useRef<(HTMLInputElement | null)[]>([]);
+  const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
 
   useEffect(() => {
     if (id) {
@@ -69,6 +77,34 @@ export default function GamePage() {
       });
     }
   }, [id]);
+
+  const checkWordApi = async (guessedWord: string) => {
+    const res = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${guessedWord}`,
+    );
+    if (res.status !== 200) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    return res.json();
+  };
+
+  const verifyWord = (index: number) => {
+    const currentWord = guess[index];
+    console.log(word, currentWord);
+    checkWordApi(currentWord).then((res) => {
+      if (res) {
+        if (currentWord === word) {
+          setGameStatus(GameStatus.Win);
+        } else if (index === turns - 1) {
+          setGameStatus(GameStatus.Loss);
+        } else {
+          reffer.current[index + 1]?.focus();
+        }
+      }
+    });
+  };
 
   const handleChange = (e: string, index: number) => {
     setGuess((prev) => {
@@ -83,7 +119,7 @@ export default function GamePage() {
     index: number,
   ) => {
     if (e.code === "Enter") {
-      reffer.current[index + 1]?.focus();
+      verifyWord(index);
     }
   };
 
@@ -92,6 +128,13 @@ export default function GamePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="space-y-2">
+        {error && <p className="text-red-500">Word not found</p>}
+        {gameStatus === GameStatus.Win && (
+          <p className="text-green-500">Winner!</p>
+        )}
+        {gameStatus === GameStatus.Loss && (
+          <p className="text-red-500">Loser</p>
+        )}
         {[...Array(turns)].map((_, index) => (
           <InputOTP
             onKeyDown={(e) => handleWordSubmit(e, index)}
