@@ -72,7 +72,7 @@ export default function GamePage() {
   const reffer = useRef<(HTMLInputElement | null)[]>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
   const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
-  const [wordSubmitted, setWordSubmitted] = useState(false);
+  const [submittedIndex, setSubmittedIndex] = useState(-1);
 
   useEffect(() => {
     if (id) {
@@ -99,6 +99,7 @@ export default function GamePage() {
   };
 
   const verifyWord = (index: number) => {
+    setSubmittedIndex(index);
     const currentWord = guess[index];
     checkWordApi(currentWord).then((res) => {
       if (res) {
@@ -199,7 +200,7 @@ export default function GamePage() {
                     key={charIdx}
                     index={charIdx}
                     className={`${
-                      guessedLetter
+                      index <= submittedIndex && guessedLetter
                         ? guessedLetter.status === "green"
                           ? "bg-green-500 text-white"
                           : guessedLetter.status === "yellow"
