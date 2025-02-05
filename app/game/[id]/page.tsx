@@ -5,7 +5,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET;
 
@@ -51,10 +51,12 @@ async function getCryptoKey() {
 }
 
 export default function GamePage() {
+  const turns = 6;
   const router = useRouter();
   const id = useParams().id;
   const [word, setWord] = useState<string | null>(null);
-  const turns = 6;
+  const [guess, setGuess] = useState<string[]>([]);
+  const reffer = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -68,13 +70,40 @@ export default function GamePage() {
     }
   }, [id]);
 
+  const handleChange = (e: string, index: number) => {
+    setGuess((prev) => {
+      const newGuess = [...prev];
+      newGuess[index] = e;
+      return newGuess;
+    });
+  };
+
+  const handleWordSubmit = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    if (e.code === "Enter") {
+      reffer.current[index + 1]?.focus();
+    }
+  };
+
   if (!word) return <p>Loading...</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="space-y-2">
         {[...Array(turns)].map((_, index) => (
-          <InputOTP maxLength={5} key={index}>
+          <InputOTP
+            onKeyDown={(e) => handleWordSubmit(e, index)}
+            autoFocus={index === 0}
+            maxLength={5}
+            ref={(ref) => {
+              reffer.current[index] = ref;
+            }}
+            key={index}
+            value={guess[index] || ""}
+            onChange={(e) => handleChange(e, index)}
+          >
             <InputOTPGroup className="uppercase font-semibold">
               <InputOTPSlot index={0} />
               <InputOTPSlot index={1} />
