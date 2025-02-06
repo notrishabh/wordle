@@ -1,0 +1,56 @@
+"use client";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { encryptWord } from "@/utils/utils";
+import { useRouter } from "next/navigation";
+
+export default function RandomJoin() {
+  const [error, setError] = useState(false);
+  const router = useRouter();
+
+  const checkWordApi = async (randomWord: string) => {
+    const res = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${randomWord}`,
+    );
+    if (res.status !== 200) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    return res.json();
+  };
+
+  const getRandomWord = async () => {
+    const res = await fetch(
+      "https://random-word-api.vercel.app/api?words=1&length=5",
+    );
+    if (res.status !== 200) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    return res.json();
+  };
+
+  const startRandomGame = async () => {
+    getRandomWord().then((word) => {
+      if (word) {
+        checkWordApi(word[0]).then(async (res) => {
+          if (res) {
+            const encryptedWord = await encryptWord(word[0].trim());
+            router.push(`/game/${encodeURIComponent(encryptedWord)}`);
+          }
+        });
+      }
+    });
+  };
+
+  return (
+    <div>
+      {error && <p>Something went wrong.</p>}
+      <Button onClick={startRandomGame} className="h-24">
+        Random
+      </Button>
+    </div>
+  );
+}
