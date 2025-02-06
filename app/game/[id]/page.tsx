@@ -1,4 +1,5 @@
 "use client";
+import RandomJoin from "@/components/random-join";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -184,6 +185,7 @@ export default function GamePage() {
                 <DialogDescription>The word was {word}</DialogDescription>
               </DialogHeader>
               <DialogFooter>
+                <RandomJoin />
                 <Button onClick={() => router.replace("/")}>Go Home</Button>
               </DialogFooter>
             </DialogContent>
@@ -198,10 +200,12 @@ export default function GamePage() {
                   Awesome! You Win.
                 </DialogTitle>
                 <DialogDescription>
+                  The word was {word}
                   Challenge a friend or play again.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
+                <RandomJoin />
                 <Button onClick={() => router.replace("/")}>Go Home</Button>
               </DialogFooter>
             </DialogContent>

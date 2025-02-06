@@ -13,7 +13,9 @@ export default function Home() {
           <Button className="w-full">Join</Button>
         </div>
         OR
-        <RandomJoin />
+        <div className="h-24">
+          <RandomJoin />
+        </div>
       </div>
     </section>
   );

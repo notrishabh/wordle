@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 export default function RandomJoin() {
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const checkWordApi = async (randomWord: string) => {
@@ -33,12 +34,14 @@ export default function RandomJoin() {
   };
 
   const startRandomGame = async () => {
+    setLoading(true);
     getRandomWord().then((word) => {
       if (word) {
         checkWordApi(word[0]).then(async (res) => {
           if (res) {
+            setLoading(false);
             const encryptedWord = await encryptWord(word[0].trim());
-            router.push(`/game/${encodeURIComponent(encryptedWord)}`);
+            router.replace(`/game/${encodeURIComponent(encryptedWord)}`);
           }
         });
       }
@@ -46,10 +49,10 @@ export default function RandomJoin() {
   };
 
   return (
-    <div>
+    <div className="h-full">
       {error && <p>Something went wrong.</p>}
-      <Button onClick={startRandomGame} className="h-24">
-        Random
+      <Button className="h-full" onClick={startRandomGame}>
+        {loading ? "Loading" : "Random"}
       </Button>
     </div>
   );
