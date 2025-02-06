@@ -110,10 +110,10 @@ export default function GamePage() {
   };
 
   const verifyWord = (index: number) => {
-    setSubmittedIndex(index);
     const currentWord = guess[index];
     checkWordApi(currentWord).then((res) => {
       if (res) {
+        setSubmittedIndex(index);
         currentWord.split("").forEach((letter, index) => {
           if (word?.includes(letter)) {
             if (word[index] === letter) {
@@ -158,6 +158,9 @@ export default function GamePage() {
   };
 
   const handleChange = (e: string, index: number) => {
+    if (error) {
+      setError(false);
+    }
     setGuess((prev) => {
       const newGuess = [...prev];
       newGuess[index] = e;
@@ -200,7 +203,7 @@ export default function GamePage() {
                   Awesome! You Win.
                 </DialogTitle>
                 <DialogDescription>
-                  The word was {word}
+                  The word was {word} <br />
                   Challenge a friend or play again.
                 </DialogDescription>
               </DialogHeader>
@@ -221,7 +224,11 @@ export default function GamePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="space-y-2">
-        {error && <p className="text-red-500">Word not found</p>}
+        {error && (
+          <p className="text-red-500 font-semibold text-center">
+            Word not found
+          </p>
+        )}
         {renderGameOverModal()}
         {[...Array(turns)].map((_, index) => (
           <InputOTP
