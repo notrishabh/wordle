@@ -41,7 +41,7 @@ export default function RandomJoin() {
           if (res) {
             setLoading(false);
             const encryptedWord = await encryptWord(word[0].trim());
-            router.replace(`/game/${encodeURIComponent(encryptedWord)}`);
+            router.push(`/game/${encodeURIComponent(encryptedWord)}`);
           }
         });
       }
