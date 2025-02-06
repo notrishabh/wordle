@@ -1,4 +1,14 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   InputOTP,
   InputOTPGroup,
@@ -163,18 +173,52 @@ export default function GamePage() {
     }
   };
 
+  const renderGameOverModal = () => {
+    switch (gameStatus) {
+      case GameStatus.Loss:
+        return (
+          <Dialog defaultOpen>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-red-500">You Lose.</DialogTitle>
+                <DialogDescription>The word was {word}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button onClick={() => router.replace("/")}>Go Home</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        );
+      case GameStatus.Win:
+        return (
+          <Dialog defaultOpen>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-green-500">
+                  Awesome! You Win.
+                </DialogTitle>
+                <DialogDescription>
+                  Challenge a friend or play again.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button onClick={() => router.replace("/")}>Go Home</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        );
+      default:
+        return "";
+    }
+  };
+
   if (!word) return <p>Loading...</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="space-y-2">
         {error && <p className="text-red-500">Word not found</p>}
-        {gameStatus === GameStatus.Win && (
-          <p className="text-green-500">Winner!</p>
-        )}
-        {gameStatus === GameStatus.Loss && (
-          <p className="text-red-500">Loser</p>
-        )}
+        {renderGameOverModal()}
         {[...Array(turns)].map((_, index) => (
           <InputOTP
             onKeyDown={(e) => handleWordSubmit(e, index)}
