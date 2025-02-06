@@ -31,3 +31,32 @@ async function getCryptoKey() {
     ["encrypt", "decrypt"],
   );
 }
+
+export async function decryptWord(encryptedData: string) {
+  try {
+    const key = await getCryptoKey();
+    const [encryptedBase64, ivBase64] = encryptedData.split(".");
+
+    if (!encryptedBase64 || !ivBase64)
+      throw new Error("Invalid encrypted data");
+
+    // ✅ Decode Base64 properly
+    const encryptedArray = new Uint8Array(
+      Buffer.from(encryptedBase64, "base64"),
+    );
+    const ivArray = new Uint8Array(Buffer.from(ivBase64, "base64"));
+
+    if (ivArray.length !== 12) throw new Error("Invalid IV length");
+
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: ivArray },
+      key,
+      encryptedArray,
+    );
+
+    return new TextDecoder().decode(decrypted);
+  } catch (error) {
+    console.error("Decryption failed:", error);
+    return null;
+  }
+}
