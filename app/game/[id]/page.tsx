@@ -41,12 +41,20 @@ export default function GamePage() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
   const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
   const [submittedIndex, setSubmittedIndex] = useState(-1);
+  const [multipleLetter, setMultipleLetter] = useState<string[]>([]);
 
   useEffect(() => {
     if (id) {
       decryptWord(decodeURIComponent(id as string)).then((decryptedWord) => {
         if (decryptedWord) {
           setWord(decryptedWord);
+          const m = new Map<string, number>();
+          for (const char of decryptedWord) {
+            m.set(char, (m.get(char) || 0) + 1);
+            if (m.get(char) === 2) {
+              setMultipleLetter((prev) => [...prev, char]);
+            }
+          }
         } else {
           router.replace("/");
         }
@@ -144,9 +152,13 @@ export default function GamePage() {
                 <DialogTitle className="text-red-500">You Lose.</DialogTitle>
                 <DialogDescription>The word was {word}</DialogDescription>
               </DialogHeader>
-              <DialogFooter>
-                <RandomJoin />
-                <Button onClick={() => router.replace("/")}>Go Home</Button>
+              <DialogFooter className="gap-2 flex flex-row">
+                <div className="w-full">
+                  <RandomJoin />
+                </div>
+                <Button className="w-full" onClick={() => router.replace("/")}>
+                  Go Home
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -164,9 +176,13 @@ export default function GamePage() {
                   Challenge a friend or play again.
                 </DialogDescription>
               </DialogHeader>
-              <DialogFooter>
-                <RandomJoin />
-                <Button onClick={() => router.replace("/")}>Go Home</Button>
+              <DialogFooter className="gap-2 flex flex-row">
+                <div className="w-full">
+                  <RandomJoin />
+                </div>
+                <Button className="w-full" onClick={() => router.replace("/")}>
+                  Go Home
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

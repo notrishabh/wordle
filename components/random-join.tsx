@@ -51,7 +51,7 @@ export default function RandomJoin() {
   return (
     <div className="h-full">
       {error && <p>Something went wrong.</p>}
-      <Button className="h-full" onClick={startRandomGame}>
+      <Button className="h-full w-full" onClick={startRandomGame}>
         {loading ? "Loading" : "Random"}
       </Button>
     </div>
