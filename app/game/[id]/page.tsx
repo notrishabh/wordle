@@ -41,20 +41,12 @@ export default function GamePage() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
   const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
   const [submittedIndex, setSubmittedIndex] = useState(-1);
-  const [multipleLetter, setMultipleLetter] = useState<string[]>([]);
 
   useEffect(() => {
     if (id) {
       decryptWord(decodeURIComponent(id as string)).then((decryptedWord) => {
         if (decryptedWord) {
           setWord(decryptedWord);
-          const m = new Map<string, number>();
-          for (const char of decryptedWord) {
-            m.set(char, (m.get(char) || 0) + 1);
-            if (m.get(char) === 2) {
-              setMultipleLetter((prev) => [...prev, char]);
-            }
-          }
         } else {
           router.replace("/");
         }
