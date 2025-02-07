@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
 import { useRouter } from "next/navigation";
 import { encryptWord } from "@/utils/utils";
+import { REGEXP_ONLY_CHARS } from "input-otp";
 
 export default function CreateForm() {
   const [createWord, setCreateWord] = useState("");
@@ -39,6 +40,8 @@ export default function CreateForm() {
         {error ? <p className="text-red-700 mb-2">Word not found</p> : ""}
         <p className="text-left w-full mb-2">Enter word</p>
         <InputOTP
+          type="text"
+          pattern={REGEXP_ONLY_CHARS}
           maxLength={5}
           value={createWord}
           onChange={(e) => setCreateWord(e)}
