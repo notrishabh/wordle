@@ -198,7 +198,7 @@ export default function GamePage() {
         {renderGameOverModal()}
         {[...Array(turns)].map((_, index) => (
           <InputOTP
-            type="text"
+            inputMode="text"
             pattern={REGEXP_ONLY_CHARS}
             onKeyDown={(e) => handleWordSubmit(e, index)}
             autoFocus={index === 0}

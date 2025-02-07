@@ -40,8 +40,8 @@ export default function CreateForm() {
         {error ? <p className="text-red-700 mb-2">Word not found</p> : ""}
         <p className="text-left w-full mb-2">Enter word</p>
         <InputOTP
-          type="text"
           pattern={REGEXP_ONLY_CHARS}
+          inputMode="text"
           maxLength={5}
           value={createWord}
           onChange={(e) => setCreateWord(e)}
