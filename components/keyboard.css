@@ -1,0 +1,25 @@
+.simple-keyboard {
+  margin: 2rem;
+  width: 80%;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.simple-keyboard.hg-theme-default.myTheme {
+  border: 5px solid rgb(255, 0, 0, 0.7);
+  border-radius: 10px;
+  margin: 10px;
+  width: calc(100% - 20px);
+}
+
+.simple-keyboard.hg-layout-default .yellow {
+  background: #eab308;
+}
+.simple-keyboard.hg-layout-default .gray {
+  background: #6b7280;
+  color: white;
+}
+.simple-keyboard.hg-layout-default .green {
+  background: #22c55e;
+  color: white;
+}

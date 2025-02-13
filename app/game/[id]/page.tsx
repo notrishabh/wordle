@@ -18,6 +18,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { decryptWord } from "@/utils/utils";
 import { REGEXP_ONLY_CHARS } from "input-otp";
+import KeyboardWrapper from "@/components/keyboard";
 
 enum GameStatus {
   Win = "win",
@@ -42,6 +43,21 @@ export default function GamePage() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
   const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
   const [submittedIndex, setSubmittedIndex] = useState(-1);
+  const keyboard = useRef(null);
+  const [buttonTheme, setButtonTheme] = useState([
+    {
+      class: "gray",
+      buttons: "",
+    },
+    {
+      class: "yellow",
+      buttons: "",
+    },
+    {
+      class: "green",
+      buttons: "",
+    },
+  ]);
 
   useEffect(() => {
     if (id) {
@@ -71,10 +87,13 @@ export default function GamePage() {
     const currentWord = guess[index];
     checkWordApi(currentWord).then((res) => {
       if (res) {
+        let green = "";
+        let yellow = "";
+        let gray = "";
         setSubmittedIndex(index);
         currentWord.split("").forEach((letter, index) => {
-          if (word?.includes(letter)) {
-            if (word[index] === letter) {
+          if (word?.includes(letter.toLowerCase())) {
+            if (word[index].toLowerCase() === letter.toLowerCase()) {
               setGuessedLetters((prev) => [
                 ...prev,
                 {
@@ -83,6 +102,7 @@ export default function GamePage() {
                   status: "green",
                 },
               ]);
+              green += letter + " ";
             } else {
               setGuessedLetters((prev) => [
                 ...prev,
@@ -93,6 +113,7 @@ export default function GamePage() {
                 },
               ]);
             }
+            yellow += letter + " ";
           } else {
             setGuessedLetters((prev) => [
               ...prev,
@@ -102,9 +123,27 @@ export default function GamePage() {
                 status: "gray",
               },
             ]);
+            gray += letter + " ";
           }
         });
-        if (currentWord === word) {
+
+        setButtonTheme((prev) => [
+          ...prev,
+          {
+            class: "gray",
+            buttons: gray,
+          },
+          {
+            class: "yellow",
+            buttons: yellow,
+          },
+          {
+            class: "green",
+            buttons: green,
+          },
+        ]);
+
+        if (currentWord.toLowerCase() === word?.toLowerCase()) {
           setGameStatus(GameStatus.Win);
         } else if (index === turns - 1) {
           setGameStatus(GameStatus.Loss);
@@ -238,6 +277,11 @@ export default function GamePage() {
           </InputOTP>
         ))}
       </div>
+      <KeyboardWrapper
+        keyboardRef={keyboard}
+        buttonTheme={buttonTheme}
+        onChange={(e) => console.log(e)}
+      />
     </div>
   );
 }
