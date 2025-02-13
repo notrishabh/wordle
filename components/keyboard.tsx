@@ -5,7 +5,7 @@ import "./keyboard.css";
 
 interface IProps {
   onChange: (input: string) => void;
-  keyboardRef: React.RefObject<typeof Keyboard>;
+  keyboardRef: React.RefObject<typeof Keyboard | null>;
   buttonTheme: Array<{ class: string; buttons: string }>;
 }
 
