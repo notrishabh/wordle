@@ -17,6 +17,11 @@ const KeyboardWrapper: FunctionComponent<IProps> = ({
   return (
     <Keyboard
       keyboardRef={(r) => (keyboardRef.current = r)}
+      mergeDisplay={true}
+      display={{
+        "{bksp}": "⌫",
+        "{enter}": "enter",
+      }}
       layoutName="default"
       onChange={onChange}
       layout={{

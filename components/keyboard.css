@@ -5,6 +5,12 @@
   text-transform: uppercase;
 }
 
+@media (max-width: 768px) {
+  .simple-keyboard {
+    width: 100%;
+  }
+}
+
 .simple-keyboard.hg-theme-default.myTheme {
   border: 5px solid rgb(255, 0, 0, 0.7);
   border-radius: 10px;
