@@ -1,11 +1,11 @@
-import React, { FunctionComponent, MutableRefObject } from "react";
+import React, { FunctionComponent } from "react";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import "./keyboard.css";
 
 interface IProps {
   onChange: (input: string) => void;
-  keyboardRef: MutableRefObject<Keyboard>;
+  keyboardRef: React.RefObject<typeof Keyboard>;
   buttonTheme: Array<{ class: string; buttons: string }>;
 }
 
