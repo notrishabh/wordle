@@ -3,6 +3,7 @@
   width: 80%;
   font-weight: 600;
   text-transform: uppercase;
+  max-width: 600px;
 }
 
 @media (max-width: 768px) {
