@@ -5,12 +5,14 @@ import "./keyboard.css";
 
 interface IProps {
   onChange: (input: string) => void;
+  onKeyPress: (input: string) => void;
   keyboardRef: React.RefObject<typeof Keyboard | null>;
   buttonTheme: Array<{ class: string; buttons: string }>;
 }
 
 const KeyboardWrapper: FunctionComponent<IProps> = ({
   onChange,
+  onKeyPress,
   keyboardRef,
   buttonTheme,
 }) => {
@@ -24,6 +26,7 @@ const KeyboardWrapper: FunctionComponent<IProps> = ({
       }}
       layoutName="default"
       onChange={onChange}
+      onKeyPress={onKeyPress}
       layout={{
         default: [
           "q w e r t y u i o p {bksp}",

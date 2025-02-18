@@ -19,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import { decryptWord } from "@/utils/utils";
 import { REGEXP_ONLY_CHARS } from "input-otp";
 import KeyboardWrapper from "@/components/keyboard";
+import Keyboard from "react-simple-keyboard";
 
 enum GameStatus {
   Win = "win",
@@ -43,7 +44,7 @@ export default function GamePage() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
   const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
   const [submittedIndex, setSubmittedIndex] = useState(-1);
-  const keyboard = useRef(null);
+  const keyboard = useRef<React.RefObject<typeof Keyboard | null>>(null);
   const [buttonTheme, setButtonTheme] = useState([
     {
       class: "gray",
@@ -85,12 +86,17 @@ export default function GamePage() {
 
   const verifyWord = (index: number) => {
     const currentWord = guess[index];
+    if (!currentWord || currentWord.length !== 5) {
+      return;
+    }
     checkWordApi(currentWord).then((res) => {
       if (res) {
         let green = "";
         let yellow = "";
         let gray = "";
         setSubmittedIndex(index);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (keyboard.current as any)?.clearInput();
         currentWord.split("").forEach((letter, index) => {
           if (word?.includes(letter.toLowerCase())) {
             if (word[index].toLowerCase() === letter.toLowerCase()) {
@@ -152,6 +158,15 @@ export default function GamePage() {
         }
       }
     });
+  };
+  const keyboardButtonPress = (e: string) => {
+    if (e === "{enter}") {
+      verifyWord(submittedIndex + 1);
+    }
+  };
+
+  const keyboardInput = (e: string) => {
+    handleChange(e, submittedIndex + 1);
   };
 
   const handleChange = (e: string, index: number) => {
@@ -280,7 +295,8 @@ export default function GamePage() {
       <KeyboardWrapper
         keyboardRef={keyboard}
         buttonTheme={buttonTheme}
-        onChange={(e) => console.log(e)}
+        onKeyPress={keyboardButtonPress}
+        onChange={keyboardInput}
       />
     </div>
   );
