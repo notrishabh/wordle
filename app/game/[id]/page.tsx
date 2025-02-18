@@ -19,7 +19,6 @@ import { useEffect, useRef, useState } from "react";
 import { decryptWord } from "@/utils/utils";
 import { REGEXP_ONLY_CHARS } from "input-otp";
 import KeyboardWrapper from "@/components/keyboard";
-import Keyboard from "react-simple-keyboard";
 
 enum GameStatus {
   Win = "win",
@@ -44,7 +43,7 @@ export default function GamePage() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Ongoing);
   const [guessedLetters, setGuessedLetters] = useState<GuessedLetter[]>([]);
   const [submittedIndex, setSubmittedIndex] = useState(-1);
-  const keyboard = useRef<React.RefObject<typeof Keyboard | null>>(null);
+  const keyboard = useRef(null);
   const [buttonTheme, setButtonTheme] = useState([
     {
       class: "gray",
